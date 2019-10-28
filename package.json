@@ -1,0 +1,36 @@
+{
+  "name": "little-process-box",
+  "version": "0.0.0",
+  "description": "A little toolkit for running and managing child processes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc tape test.js"
+  },
+  "keywords": [
+    "little",
+    "process",
+    "box",
+    "pool",
+    "manage"
+  ],
+  "author": "Joseph Werle <joseph.werle@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "async-exit-hook": "^2.0.1",
+    "batch": "^0.6.1",
+    "debug": "^4.1.1",
+    "nanoassert": "^2.0.0",
+    "nanoprocess": "^0.2.2",
+    "nanoresource-pool": "^0.1.1",
+    "open": "^7.0.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/little-core-labs/little-process-box.git"
+  },
+  "bugs": {
+    "url": "https://github.com/little-core-labs/little-process-box/issues"
+  },
+  "homepage": "https://github.com/little-core-labs/little-process-box#readme"
+}

@@ -2,13 +2,17 @@ const { ProcessPool } = require('./pool')
 const { Service } = require('./service')
 const { Pool } = require('nanoresource-pool')
 const assert = require('nanoassert')
+const mutex = require('mutexify')
 const Batch = require('batch')
 const names = require('./data/names')
 
 // quick util
 const randomItem = (a) => a[Math.random() * a.length % a.length | 0]
+const noop = () => void 0
 
 /**
+ * The `SupervisorProcessPool` class represents an extended `ProcessPool`
+ * that creates `Service` instances as the process resource.
  * @class
  * @extends ProcessPool
  */
@@ -17,13 +21,14 @@ class SupervisorProcessPool extends ProcessPool {
   /**
    * `SupervisorProcessPool` class constructor.
    * @param {Object} opts
+   * @param {String} opts.name
    */
   constructor(opts) {
     if (!opts || 'object' !== typeof opts) {
       opts = {}
     }
 
-    super(Service)
+    super(Service, opts)
     this.name = opts.name || randomItem(names)
   }
 }
@@ -44,7 +49,9 @@ class Supervisor extends Pool {
    * @param {Object} opts
    */
   constructor(opts) {
-    super(SupervisorProcessPool)
+    opts = Object.assign({ autoOpen: false }, opts) // copy
+    super(SupervisorProcessPool, opts)
+    this.autoOpen = Boolean(opts.autoOpen)
   }
 
   /**
@@ -56,11 +63,27 @@ class Supervisor extends Pool {
   }
 
   /**
+   * `true` if the supervisor has successfully started.
+   * @accessor
+   */
+  get started() {
+    return this.opened
+  }
+
+  /**
+   * `true` if the supervisor is in the middle of starting.
+   * @accessor
+   */
+  get starting() {
+    return this.opening
+  }
+
+  /**
    * Creates a new `SupervisorProcessPool` instance.
    * @param {?(Object)} opts
    */
   pool(opts) {
-    return this.resource(opts)
+    return this.resource(opts, { autoOpen: this.autoOpen })
   }
 
   /**
@@ -80,8 +103,14 @@ class Supervisor extends Pool {
     assert(opts && 'object' === typeof opts, 'Options must be a object.')
     opts.name = name
     assert(opts.name && 'string' === typeof opts.name, 'Name must be a string.')
+
     const pool = opts.pool || this.pool()
     const service = pool.resource(opts)
+
+    if (!opts.pool) {
+      process.nextTick(() => pool.open())
+    }
+
     return Object.assign(service, { pool })
   }
 
@@ -106,7 +135,13 @@ class Supervisor extends Pool {
     for (const service of services) {
       if ('function' === typeof service.stat) {
         batch.push((next) => service.stat((err, stats) => {
-          if (stats) { stats.service = service }
+          if (stats) {
+            Object.defineProperty(stats, 'service', {
+              enumerable: false,
+              get: () => service
+            })
+          }
+
           next(err, stats)
         }))
       }
@@ -114,11 +149,70 @@ class Supervisor extends Pool {
 
     batch.end(callback)
   }
+
+  /**
+   * Starts all services in all pools calling `callback(err)` upon success
+   * or error.
+   * @param {?(Function)} callback
+   */
+  start(callback) {
+    if ('function' !== typeof callback) {
+      callback = noop
+    }
+
+    const services = this.query()
+    const batch = new Batch()
+
+    for (const service of services) {
+      batch.push((next) => service.start(next))
+    }
+
+    batch.end((err) => {
+      this.open(callback)
+    })
+  }
+
+  /**
+   * Stops all services in all pools calling `callback(err)` upon success
+   * or error.
+   * @param {?(Function)} callback
+   */
+  stop(callback) {
+    if ('function' !== typeof callback) {
+      callback = noop
+    }
+
+    this.close((err) => {
+      if (err) { return callback(err) }
+      this.closed = false
+      this.closing = false
+      this.opened = false
+      this.opening = false
+      callback(err)
+    })
+  }
+
+  /**
+   * Restarts all services in all pools calling `callback(err)` upon success
+   * or error.
+   * @param {?(Function)} callback
+   */
+  restart(callback) {
+    if ('function' !== typeof callback) {
+      callback = noop
+    }
+
+    this.stop((err) => {
+      if (err) { return callback(err) }
+      this.start(callback)
+    })
+  }
 }
 
 /**
  * Module exports.
 */
 module.exports = {
+  SupervisorProcessPool,
   Supervisor,
 }

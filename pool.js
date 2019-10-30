@@ -57,8 +57,14 @@ class ProcessPool extends Pool {
    * `ProcessPool` class constructor.
    * @param {?(Function)} Factory
    */
-  constructor(Factory) {
-    super(Factory || Process)
+  constructor(Factory, opts) {
+    if (Factory && 'object' === typeof Factory) {
+      opts = Factory
+      Factory = null
+    }
+
+    opts = Object.assign({ autoOpen: false }, opts) // copy
+    super(Factory || Process, opts)
     pools.add(this)
   }
 

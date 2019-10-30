@@ -5,7 +5,8 @@ const assert = require('nanoassert')
 const noop = () => void 0
 
 /**
- * The `Service class
+ * The `Service` class represents a named process that can be started,
+ * restarted, and stopped.
  * @class
  * @extends Process
  */
@@ -22,7 +23,7 @@ class Service extends Process {
     super(opts.exec, opts.args, opts)
 
     this.env = opts.env || {}
-    this.pool = null
+    this.pool = opts.pool || null
     this.type = opts.type
     this.name = opts.name
     this.exec = opts.exec
@@ -71,6 +72,19 @@ class Service extends Process {
   }
 
   /**
+   * Starts the services calling `callback(err)` upon success
+   * or error.
+   * @param {?(Function)} callback
+   */
+  start(callback) {
+    if ('function' !== typeof callback) {
+      callback = noop
+    }
+
+    this.open(callback)
+  }
+
+  /**
    * Stops the services calling `callback(err)` upon success
    * or error. This function will reset the `nanoresource`
    * state (opened, opening, closed, closing, actives) to their
@@ -89,26 +103,13 @@ class Service extends Process {
       this.opened = false
       this.opening = false
       this.actives = 0
+      callback(err)
     })
-  }
-
-  /**
-   * Starts the services calling `callback(err)` upon success
-   * or error.
-   * @param {?(Function)} callback
-   */
-  start(callback) {
-    if ('function' !== typeof callback) {
-      callback = noop
-    }
-
-    this.open(callback)
   }
 
   /**
    * Restarts the services calling `callback(err)` upon success
    * or error. This function will call `service.stop(callback)`
-   *
    * @param {?(Function)} callback
    */
   restart(callback) {

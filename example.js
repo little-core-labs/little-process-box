@@ -8,9 +8,11 @@ supervisor.service('http', {
   stdio: 'inherit'
 })
 
-supervisor.ready(() => {
+supervisor.start((err) => {
+  console.log('error', err);
   console.log('ready');
-  const pools = supervisor.pools
   supervisor.stat(console.log)
-  //console.log(pools);
+  setTimeout(() => {
+    supervisor.stop()
+  }, 2000)
 })

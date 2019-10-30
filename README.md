@@ -63,7 +63,7 @@ The `ProcessPool` class represents a container of running processes
 managed by the instance. This class extends the `Pool` class from the
 [nanoresource-pool][nanoresource-pool] module. You can override the
 [default factory](#process]) by supplying your own `Factory` that should
-implement the [nanoresoure][nanoresoure]
+implement the [nanoresource][nanoresource]
 
 #### `pool.spawn(command[, args[, opts]])`
 
@@ -207,7 +207,7 @@ Same as [`Process#stat()`][nanoprocess#stat].
 ### `const proc = new Process(command[, args[, opts]])`
 
 The [`Process`][nanoprocess#process] class exported from
-[nanoprocess][nanoresoure].
+[nanoprocess][nanoresource].
 
 ## License
 
@@ -217,7 +217,7 @@ MIT
 
 - [open][open]
 - [nanoprocess][nanoprocess]
-- [nanoresoure][nanoresoure]
+- [nanoresource][nanoresource]
 - [nanoresource-pool][nanoresource-pool]
 
 

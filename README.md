@@ -21,10 +21,32 @@ $ npm install little-process-box
 ## Usage
 
 ```js
+const {
+  ProcessPool,
+  Supervisor,
+  Process,
+  Service,
+} = require('little-process-box')
 // TODO
 ```
 
 ## API
+
+### `const pool = new ProcessPool()`
+
+> // TODO
+
+### `const supervisor = new Supervisor()`
+
+> // TODO
+
+### `const service = new Service(options)`
+
+> // TODO
+
+### `const proc = new Process(command[, args[, opts]])`
+
+> // TODO
 
 ## License
 
@@ -32,5 +54,5 @@ MIT
 
 ## See Also
 
-TODO
+> // TODO
 

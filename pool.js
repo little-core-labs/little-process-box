@@ -2,7 +2,7 @@ const { Process } = require('nanoprocess')
 const { Pool } = require('nanoresource-pool')
 const assert = require('nanoassert')
 const onexit = require('async-exit-hook')
-const debug = require('debug')('little-network-box:pool')
+const debug = require('debug')('little-process-box:pool')
 const Batch = require('batch')
 const popen = require('open')
 
@@ -14,10 +14,11 @@ const open = (pathspec, opts, cb) => errback(popen(pathspec, opts), cb)
  * A `Set` of `ProcessPool` instances that are closed when
  * the process exits.
  * @private
-*/
+ */
+// istanbul ignore next
 const pools = new Set()
 
-// Handle
+// Handle main process exit
 onexit((done) => {
   let count = 0
   const batch = new Batch()
@@ -46,6 +47,7 @@ onexit((done) => {
  * The `ProcessPool` class represents a container of running processes
  * managed by the instance. This class extends the `Pool` class from the
  * 'nanoresource-pool' module.
+ * @public
  * @class
  * @extends Pool
  */
@@ -53,9 +55,10 @@ class ProcessPool extends Pool {
 
   /**
    * `ProcessPool` class constructor.
+   * @param {?(Function)} Factory
    */
-  constructor() {
-    super(Process)
+  constructor(Factory) {
+    super(Factory || Process)
     pools.add(this)
   }
 
@@ -113,6 +116,7 @@ class ProcessPool extends Pool {
    * @param {?(Object)} opts
    * @return {Process}
    */
+  // istanbul ignore function
   launch(pathspec, opts) {
     opts = Object.assign({ spawn }, opts) // copy
     return this.resource(pathspec, opts)
@@ -121,7 +125,8 @@ class ProcessPool extends Pool {
       if (!opts.app) {
         opts.app = [ false, ...args]
       }
-      open(pathspec, opts, callback)
+
+      process.nextTick(open, pathspec, opts, callback)
     }
   }
 }

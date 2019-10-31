@@ -126,7 +126,6 @@ class Channel extends EventEmitter {
    * @emits message
    */
   onmessage(channel, type, message) {
-    //console.error(message)
     this.emit('message', message, channel, type)
   }
 

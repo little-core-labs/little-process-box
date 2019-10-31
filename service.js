@@ -1,4 +1,4 @@
-const { Process } = require('nanoprocess')
+const { Process } = require('./process')
 const assert = require('nanoassert')
 
 // quick util

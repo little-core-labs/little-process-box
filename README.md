@@ -204,10 +204,57 @@ or error. This function will call `service.stop(callback)`
 Same as [`Process#stat()`][nanoprocess#stat].
 
 <a name="process"></a>
-### `const proc = new Process(command[, args[, opts]])`
+### `const childProcess = new Process(command[, args[, opts]])`
 
 The [`Process`][nanoprocess#process] class exported from
 [nanoprocess][nanoresource].
+
+<a name="channel"></a>
+### `const channel = new Channel(process)`
+
+The `Channel` class represents a channel for a running process that
+leverages IPC channels falling back to `stdin` and `stdout` streams to
+send and receive messages on where `process` can be a
+[`Process`](#process) instance, a
+[`ChildProcess`](
+https://nodejs.org/api/child_process.html#child_process_class_childprocess)
+instance, or the global
+[`process`](https://nodejs.org/api/process.html#process_process) object.
+
+#### `channel.send(buffer[, opts])`
+
+Sends a `buffer` to the process through the message channel where `opts` can
+be:
+
+```js
+{
+  id: 0, // The channel ID to send this on
+  type: 0, // The message type
+}
+```
+
+#### `channel.close(callback)`
+
+Closes channel calling `callback(err)` upon success or error.
+
+#### `channel.destroy([err])`
+
+Close process message channel and cleans up all resources.
+
+#### `channel.on('message', message, id, type)`
+
+Emitted when a message a sent over the process channel where `message`
+is a `Buffer` of the message sent, `id` is the channel
+identifier and `type` is the message type.
+
+#### `channel.on('error', err)`
+
+Emitted when an error occurs on the channel process during the life
+time of the `Channel` instance.
+
+#### `channel.on('close')`
+
+Emitted when the channel closes.
 
 ## License
 

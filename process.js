@@ -3,6 +3,6 @@ const { Process } = require('nanoprocess')
 /**
  * Module exports.
  */
-module.exxports = {
+module.exports = {
   Process
 }

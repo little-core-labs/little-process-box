@@ -4,7 +4,7 @@
   "description": "A little toolkit for running and managing child processes.",
   "main": "index.js",
   "scripts": {
-    "test": "nyc -x fixtures tape test.js",
+    "test": "nyc -x fixtures -x data -x tests tape tests/*.js",
     "prepare": "npm run generate:names",
     "generate:names": "node scripts/generate-names.js"
   },
@@ -21,11 +21,13 @@
     "async-exit-hook": "^2.0.1",
     "batch": "^0.6.1",
     "debug": "^4.1.1",
+    "duplexify": "^4.1.1",
     "mutexify": "^1.2.0",
     "nanoassert": "^2.0.0",
-    "nanoprocess": "^0.2.2",
+    "nanoprocess": "^0.7.0",
     "nanoresource-pool": "^0.3.1",
-    "open": "^7.0.0"
+    "open": "^7.0.0",
+    "simple-message-channels": "^1.2.1"
   },
   "devDependencies": {
     "chance": "^1.1.3",

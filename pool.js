@@ -1,4 +1,4 @@
-const { Process } = require('nanoprocess')
+const { Process } = require('./process')
 const { Pool } = require('nanoresource-pool')
 const assert = require('nanoassert')
 const onexit = require('async-exit-hook')

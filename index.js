@@ -1,5 +1,6 @@
 const { ProcessPool } = require('./pool')
 const { Supervisor } = require('./supervisor')
+const { Channel } = require('./channel')
 const { Process } = require('./process')
 const { Service } = require('./service')
 
@@ -12,6 +13,7 @@ const { Service } = require('./service')
 module.exports = Object.assign(factory(ProcessPool), {
   // factories
   supervisor: factory(Supervisor),
+  channel: factory(Channel),
   process: factory(Process),
   service: factory(Service),
   pool: factory(ProcessPool),
@@ -19,6 +21,7 @@ module.exports = Object.assign(factory(ProcessPool), {
   // classes
   ProcessPool,
   Supervisor,
+  Channel,
   Process,
   Service,
 })

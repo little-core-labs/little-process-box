@@ -1,6 +1,5 @@
 const SimpleMessageChannel = require('simple-message-channels')
 const { EventEmitter } = require('events')
-const duplexify = require('duplexify')
 const assert = require('nanoassert')
 
 // quick util

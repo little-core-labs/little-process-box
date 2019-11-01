@@ -21,7 +21,6 @@
     "async-exit-hook": "^2.0.1",
     "batch": "^0.6.1",
     "debug": "^4.1.1",
-    "duplexify": "^4.1.1",
     "mutexify": "^1.2.0",
     "nanoassert": "^2.0.0",
     "nanoprocess": "^0.7.0",

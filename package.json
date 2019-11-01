@@ -26,7 +26,9 @@
     "nanoprocess": "^0.7.0",
     "nanoresource-pool": "^0.3.1",
     "open": "^7.0.0",
-    "simple-message-channels": "^1.2.1"
+    "pump": "^3.0.0",
+    "simple-message-channels": "^1.2.1",
+    "through2": "^3.0.1"
   },
   "devDependencies": {
     "chance": "^1.1.3",

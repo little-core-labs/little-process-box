@@ -151,6 +151,10 @@ The [pool](#supervisor-process-pool) that created this service.
 
 The service type. This can be anything.
 
+#### `service.name`
+
+The service name. This can be anything.
+
 #### `service.exec`
 
 The command used to execute the service.
@@ -183,6 +187,10 @@ A `Readable` stream for the service's `stderr`.
 
 `true` if the service is in the middle of starting.
 
+#### `service.stopped`
+
+`true` if the service is stopped.
+
 #### `service.start([callback])`
 
 Starts the services calling `callback(err)` upon success or error.
@@ -202,6 +210,13 @@ or error. This function will call `service.stop(callback)`
 #### `service.stat([callback])`
 
 Same as [`Process#stat()`][nanoprocess#stat].
+
+#### `service.createLogStream()`
+
+Returns a readable stream to the caller that pipes `stderr` from the
+running service to the stream. If the service does not have a
+readable `stderr` stream, then the returned stream will automatically
+end.
 
 <a name="process"></a>
 ### `const childProcess = new Process(command[, args[, opts]])`

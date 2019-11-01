@@ -137,6 +137,8 @@ class Channel extends EventEmitter {
       opts = {}
     }
 
+    buffer = Buffer.from(buffer) // ensure buffer
+
     const message = this.channels.send(opts.id || 0, opts.type || 0, buffer)
     if (this.process.channel && 'function' === typeof this.process.send) {
       return this.process.send(message)

@@ -31,7 +31,7 @@ class Channel extends EventEmitter {
       'Expecting process to be a `nanoprocess` or `global.process`.')
 
     this.ondata  = bind(this, this.ondata)
-    this.onerror = bind(this, this.error)
+    this.onerror = bind(this, this.onerror)
     this.onmessage = bind(this, this.onmessage)
     this.onmissing = bind(this, this.onmissing)
 
@@ -85,11 +85,7 @@ class Channel extends EventEmitter {
    * @emits error
    */
   onerror(err) {
-    // istanbul ignore next
-    if (err) {
-      // istanbul ignore next
-      this.emit('error', err)
-    }
+    this.emit('error', err)
   }
 
   /**
@@ -112,7 +108,6 @@ class Channel extends EventEmitter {
    * @emits missing
    */
   onmissing(bytes) {
-    // istanbul ignore next
     this.emit('missing', bytes)
   }
 
@@ -185,9 +180,8 @@ class Channel extends EventEmitter {
     this.channels.destroy(err)
     this.destroyed = true
     process.nextTick(() => this.emit('close'))
-    // istanbul ignore next
     if (err) {
-      this.emit('error', err)
+      this.onerror(err)
     }
   }
 }

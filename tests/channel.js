@@ -5,6 +5,7 @@ const { Process } = require('../process')
 const { Channel } = require('../channel')
 
 const WORK = path.resolve(__dirname, '..', 'fixtures', 'work.js')
+const ECHO = path.resolve(__dirname, '..', 'fixtures', 'echo.js')
 const ECHO_CHANNEL = path.resolve(__dirname, '..', 'fixtures', 'echo-channel.js')
 
 // `stdin` hangs process
@@ -26,6 +27,36 @@ test('const channel = new Channel(process)', (t) => {
       })
     })
   })
+})
+
+test('channel.destroy() - should emit close event', (t) => {
+  const channel = new Channel(process)
+  channel.destroy()
+  channel.on('close', () => {
+    t.ok(channel.destroyed)
+    t.end()
+  })
+})
+
+test('channel.close() - should emit close event', (t) => {
+  const channel = new Channel(process)
+  channel.close()
+  channel.on('close', () => {
+    t.ok(channel.destroyed)
+    t.end()
+  })
+})
+
+test('channel.destroy(err) - should emit error event with err', (t) => {
+  const channel = new Channel(process)
+  channel.on('error', (err) => {
+    t.ok(err)
+    channel.on('close', () => {
+      t.ok(channel.destroyed)
+      t.end()
+    })
+  })
+  channel.destroy(new Error('oops'))
 })
 
 test('channel - SMC types', (t) => {
@@ -87,5 +118,44 @@ test('channel - double close', (t) => {
   channel.close((err) => {
     t.ok(err)
     t.end()
+  })
+})
+
+test('channel.onerror(err) - emits error event', (t) => {
+  const channel = new Channel(process)
+  channel.on('error', (err) => {
+    t.ok(err)
+    t.equal('oops', err.message)
+    t.end()
+  })
+
+  channel.onerror(new Error('oops'))
+})
+
+test('channel.ondata(data) - emits data after receiving message', (t) => {
+  const echo = new Process('node', [ ECHO_CHANNEL ], { stdio: 'pipe' })
+  echo.open((err) => {
+    const channel = new Channel(echo)
+    channel.on('data', (data) => {
+      t.ok(data)
+      channel.close(() => {
+        echo.close(() => {
+          t.end()
+        })
+      })
+    })
+
+    channel.send(Buffer.from('hello'))
+  })
+})
+
+test('channel.onmissing(data) - emits missing bytes after raw data', (t) => {
+  const echo = new Process('node', [ ECHO, 'hello' ], { stdio: 'pipe' })
+  echo.open((err) => {
+    const channel = new Channel(echo)
+    channel.on('missing', (bytes) => {
+      t.ok(bytes && 'number' === typeof bytes)
+      t.end()
+    })
   })
 })

@@ -44,18 +44,16 @@ class Channel extends EventEmitter {
       onmissing: this.onmissing,
     })
 
-    if (this.process === global.process && this.process.stdin) {
-      this.process.stdin.on('data', this.ondata)
-    } else if (this.process.stdout) {
-      this.process.stdout.on('data', this.ondata)
-    }
-
     if (this.process.channel) {
       const onmessage = (message) => this.ondata(Buffer.from(message))
       this.process.on('message', onmessage)
       this.once('close', () => {
         this.process.removeListener('message', onmessage)
       })
+    } else if (this.process === global.process && this.process.stdin) {
+      this.process.stdin.on('data', this.ondata)
+    } else if (this.process.stdout) {
+      this.process.stdout.on('data', this.ondata)
     }
 
     this.once('close', () => {

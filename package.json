@@ -1,6 +1,6 @@
 {
   "name": "little-process-box",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A little toolkit for running and managing child processes.",
   "main": "index.js",
   "scripts": {

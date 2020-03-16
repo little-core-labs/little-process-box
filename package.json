@@ -23,7 +23,7 @@
     "debug": "^4.1.1",
     "mutexify": "^1.2.0",
     "nanoassert": "^2.0.0",
-    "nanoprocess": "^0.7.0",
+    "nanoprocess": "^0.8.4",
     "nanoresource-pool": "^0.3.1",
     "open": "^7.0.0",
     "pump": "^3.0.0",
